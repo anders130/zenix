@@ -3,7 +3,7 @@ self: {
     lib,
     ...
 }: let
-    cfg = config.programs.nixfox;
+    cfg = config.programs.zenix;
 
     generateIni = profiles: let
         profileList = lib.mapAttrsToList (name: profile: profile // {inherit name;}) profiles;
@@ -22,8 +22,8 @@ self: {
             Version=2
         '']);
 in {
-    options.programs.nixfox = {
-        enable = lib.mkEnableOption "nixfox";
+    options.programs.zenix = {
+        enable = lib.mkEnableOption "zenix";
         package = lib.mkOption {
             type = lib.types.package;
             description = "Package for zen-browser";
@@ -32,9 +32,6 @@ in {
             type = lib.types.attrsOf lib.types.anything;
             default = {};
             description = "This can be used like home-manager's firefox profiles";
-        };
-        username = lib.mkOption {
-            type = lib.types.str;
         };
     };
 
