@@ -43,14 +43,17 @@ in {
         home-manager.users.${cfg.username} = {
             programs.firefox = {
                 enable = true;
-                profiles = lib.mapAttrs (name: profile: profile // {
-                    inherit name;
-                    # avoid conflicts with firefox profiles
-                    id = profile.id + 100;
-                    isDefault = false;
-                    # move to zen folder
-                    path = "../../.zen/${name}";
-                }) cfg.profiles;
+                profiles = builtins.listToAttrs (map (name: {
+                    name = "zen-${name}";
+                    value = cfg.profiles.${name} // {
+                        inherit name;
+                        # Avoid conflicts with Firefox profiles
+                        id = cfg.profiles.${name}.id + 100;
+                        isDefault = false;
+                        # Move to zen folder
+                        path = "../../.zen/${name}";
+                    };
+                }) (builtins.attrNames cfg.profiles));
             };
             home.file.".zen/profiles.ini".text = generateIni cfg.profiles;
         };
