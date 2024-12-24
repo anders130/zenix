@@ -21,6 +21,45 @@ self: {
             StartWithLastProfile=1
             Version=2
         '']);
+
+    userChromeCSS = vars: /*css*/''
+        @import url("zenix/findbar.css");
+
+        * {
+            --zenix-color-primary: ${vars.colors.primary};
+            --zenix-color-secondary: ${vars.colors.secondary};
+            --zenix-color-border-light: ${vars.colors.borderLight};
+            --zenix-color-border-dark: ${vars.colors.borderDark};
+            --zenix-color-surface0: ${vars.colors.surface0};
+            --zenix-color-surface1: ${vars.colors.surface1};
+            --zenix-color-surface2: ${vars.colors.surface2};
+            --zenix-color-overlay0: ${vars.colors.overlay0};
+            --zenix-color-text: ${vars.colors.text};
+            --zenix-color-mauve: ${vars.colors.mauve};
+            --zenix-color-maroon: ${vars.colors.maroon};
+            --zenix-color-red: ${vars.colors.red};
+            --zenix-glass-background: ${vars.glass.background};
+            --zenix-glass-blur-radius: ${vars.glass.blurRadius};
+        }
+    '';
+
+    mkProfile = name: pcfg: {
+        name = "zen-${name}";
+        value = pcfg // {
+            inherit name;
+            # Avoid conflicts with Firefox profiles
+            id = cfg.profiles.${name}.id + 100;
+            isDefault = false;
+            # Move to zen folder
+            path = "../../.zen/${name}";
+
+            settings = {
+                "zenix.findbar.disabled" = !cfg.chrome.findBar;
+            };
+
+            userChrome = (userChromeCSS cfg.chrome.variables) + (if pcfg ? userChrome then pcfg.userChrome else "");
+        };
+    };
 in {
     options.programs.zenix = {
         enable = lib.mkEnableOption "zenix";
@@ -81,45 +120,7 @@ in {
         };
         programs.firefox = {
             enable = true;
-            profiles = builtins.listToAttrs (map (name: let
-                pcfg = cfg.profiles.${name};
-            in {
-                name = "zen-${name}";
-                value = pcfg // {
-                    inherit name;
-                    # Avoid conflicts with Firefox profiles
-                    id = cfg.profiles.${name}.id + 100;
-                    isDefault = false;
-                    # Move to zen folder
-                    path = "../../.zen/${name}";
-
-                    settings = {
-                        "zenix.findbar.disabled" = !cfg.chrome.findBar;
-                    };
-
-                    userChrome = ''
-                        @import url("zenix/findbar.css");
-
-                        * {
-                            --zenix-color-primary: ${cfg.chrome.variables.colors.primary};
-                            --zenix-color-secondary: ${cfg.chrome.variables.colors.secondary};
-                            --zenix-color-border-light: ${cfg.chrome.variables.colors.borderLight};
-                            --zenix-color-border-dark: ${cfg.chrome.variables.colors.borderDark};
-                            --zenix-color-surface0: ${cfg.chrome.variables.colors.surface0};
-                            --zenix-color-surface1: ${cfg.chrome.variables.colors.surface1};
-                            --zenix-color-surface2: ${cfg.chrome.variables.colors.surface2};
-                            --zenix-color-overlay0: ${cfg.chrome.variables.colors.overlay0};
-                            --zenix-color-text: ${cfg.chrome.variables.colors.text};
-                            --zenix-color-mauve: ${cfg.chrome.variables.colors.mauve};
-                            --zenix-color-maroon: ${cfg.chrome.variables.colors.maroon};
-                            --zenix-color-red: ${cfg.chrome.variables.colors.red};
-                            --zenix-glass-background: ${cfg.chrome.variables.glass.background};
-                            --zenix-glass-blur-radius: ${cfg.chrome.variables.glass.blurRadius};
-                        }
-
-                    '' + (if pcfg ? userChrome then pcfg.userChrome else "");
-                };
-            }) (builtins.attrNames cfg.profiles));
+            profiles = builtins.listToAttrs (map (name: mkProfile name cfg.profiles.${name}) (builtins.attrNames cfg.profiles));
         };
     };
 }
