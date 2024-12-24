@@ -17,7 +17,7 @@
     }:
         flake-parts.lib.mkFlake {inherit inputs;} {
             systems = ["x86_64-linux"];
-            flake.nixosModules.default = import ./nixos-module.nix {inherit self;};
+            flake.hmModules.default = import ./module {inherit self;};
             perSystem = {pkgs, ...}: {
                 packages.default = pkgs.hello;
             };

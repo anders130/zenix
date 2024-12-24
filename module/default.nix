@@ -3,7 +3,7 @@ self: {
     lib,
     ...
 }: let
-    cfg = config.nixfox;
+    cfg = config.programs.nixfox;
 
     generateIni = profiles: let
         profileList = lib.mapAttrsToList (name: profile: profile // {inherit name;}) profiles;
@@ -22,7 +22,7 @@ self: {
             Version=2
         '']);
 in {
-    options.nixfox = {
+    options.programs.nixfox = {
         enable = lib.mkEnableOption "nixfox";
         package = lib.mkOption {
             type = lib.types.package;
@@ -38,24 +38,24 @@ in {
         };
     };
 
-    config = lib.mkIf config.nixfox.enable {
-        environment.systemPackages = [cfg.package];
-        home-manager.users.${cfg.username} = {
-            programs.firefox = {
-                enable = true;
-                profiles = builtins.listToAttrs (map (name: {
-                    name = "zen-${name}";
-                    value = cfg.profiles.${name} // {
-                        inherit name;
-                        # Avoid conflicts with Firefox profiles
-                        id = cfg.profiles.${name}.id + 100;
-                        isDefault = false;
-                        # Move to zen folder
-                        path = "../../.zen/${name}";
-                    };
-                }) (builtins.attrNames cfg.profiles));
-            };
-            home.file.".zen/profiles.ini".text = generateIni cfg.profiles;
+    config = lib.mkIf cfg.enable {
+        home = {
+            packages = [cfg.package];
+            file.".zen/profiles.ini".text = generateIni cfg.profiles;
+        };
+        programs.firefox = {
+            enable = true;
+            profiles = builtins.listToAttrs (map (name: {
+                name = "zen-${name}";
+                value = cfg.profiles.${name} // {
+                    inherit name;
+                    # Avoid conflicts with Firefox profiles
+                    id = cfg.profiles.${name}.id + 100;
+                    isDefault = false;
+                    # Move to zen folder
+                    path = "../../.zen/${name}";
+                };
+            }) (builtins.attrNames cfg.profiles));
         };
     };
 }
