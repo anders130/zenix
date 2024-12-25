@@ -143,19 +143,7 @@
             .found-matches {
                 font-size: 14px !important;
                 margin-top: 10px !important;
-
-                &:not([hidden]) {
-                    &::before {
-                        background-image: url("chrome://browser/skin/zen-icons/search-page.svg") !important;
-                        background-repeat: no-repeat !important;
-                        padding-left: 25px !important;
-                        color: var(--zenix-color-text) !important;
-
-                        @media (prefers-color-scheme: dark) {
-                            filter: invert();
-                        }
-                    }
-                }
+                color: var(--zenix-color-text) !important;
             }
 
             .findbar-find-status {
