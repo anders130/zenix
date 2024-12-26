@@ -1,0 +1,8 @@
+@media (-moz-bool-pref: "zenix.hide-titlebar-buttons") {
+
+    .titlebar-buttonbox-container,
+    #alltabs-button,
+    .titlebar-spacer[type="post-tabs"] {
+        display: none !important;
+    }
+}

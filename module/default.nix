@@ -24,6 +24,7 @@ self: {
 
     userChromeCSS = vars: /*css*/''
         @import url("zenix/findbar.css");
+        @import url("zenix/hide-titlebar-buttons.css");
 
         * {
             --zenix-color-primary: ${vars.colors.primary};
@@ -55,6 +56,7 @@ self: {
 
             settings = {
                 "zenix.findbar.disabled" = !cfg.chrome.findBar;
+                "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
             };
 
             userChrome = (userChromeCSS cfg.chrome.variables) + (if pcfg ? userChrome then pcfg.userChrome else "");
@@ -101,6 +103,10 @@ in {
             findBar = lib.mkOption {
                 type = lib.types.bool;
                 default = true;
+            };
+            hideTitlebarButtons = lib.mkOption {
+                type = lib.types.bool;
+                default = false;
             };
         };
     };
