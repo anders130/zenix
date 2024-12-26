@@ -20,13 +20,18 @@ A flake for [zen-browser](https://github.com/zen-browser/desktop). It wraps the 
     programs.zenix = {
         enable = true;
         package = pkgs.zen-browser;
-        profiles = {
+        chrome = {
+            findbar = true;
+            hideTitlebarButtons = true;
+        };
+        profiles = rec {
             default = {
-                name = "Default";
                 isDefault = true;
+                extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+                    ublock-origin
+                ];
             };
-            work = {
-                name = "Work";
+            work = default // {
                 isDefault = false;
             };
         };

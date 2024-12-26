@@ -55,7 +55,7 @@ self: {
             path = "../../.zen/${name}";
 
             settings = {
-                "zenix.findbar.disabled" = !cfg.chrome.findBar;
+                "zenix.findbar.disabled" = !cfg.chrome.findbar;
                 "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
             };
 
@@ -100,7 +100,7 @@ in {
                     blurRadius = mkColorOpt "12px";
                 };
             };
-            findBar = lib.mkOption {
+            findbar = lib.mkOption {
                 type = lib.types.bool;
                 default = true;
             };
