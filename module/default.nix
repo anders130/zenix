@@ -1,6 +1,7 @@
 self: {
     config,
     lib,
+    pkgs,
     ...
 }: let
     cfg = config.programs.zenix;
@@ -68,6 +69,7 @@ in {
         package = lib.mkOption {
             type = lib.types.package;
             description = "Package for zen-browser";
+            default = self.inputs.zen-browser.packages.${pkgs.system}.default;
         };
         profiles = lib.mkOption {
             type = lib.types.attrsOf lib.types.anything;

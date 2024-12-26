@@ -8,18 +8,15 @@
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        zen-browser = {
+            url = "github:0xc000022070/zen-browser-flake";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
 
-    outputs = inputs @ {
-        flake-parts,
-        self,
-        ...
-    }:
-        flake-parts.lib.mkFlake {inherit inputs;} {
+    outputs = inputs:
+        inputs.flake-parts.lib.mkFlake {inherit inputs;} {
             systems = ["x86_64-linux"];
-            flake.hmModules.default = import ./module {inherit self;};
-            perSystem = {pkgs, ...}: {
-                packages.default = pkgs.hello;
-            };
+            flake.hmModules.default = import ./module inputs.self;
         };
 }
