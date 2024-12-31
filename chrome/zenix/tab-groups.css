@@ -97,6 +97,13 @@
                     padding-left: 29px !important;
                 }
 
+                /* Hide tab group label when not expanded */
+                @media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
+                    &>label {
+                        color: transparent !important;
+                    }
+                }
+
                 &>label::before {
                     content: "" !important;
                     position: absolute !important;
