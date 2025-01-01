@@ -1,0 +1,139 @@
+/* Global styles and color variables */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --zen-colors-primary: var(--zenix-color-surface0) !important;
+        --zen-primary-color: var(--zenix-color-primary) !important;
+        --zen-colors-secondary: var(--zenix-color-surface0) !important;
+        --zen-colors-tertiary: var(--zenix-color-mantle) !important;
+        --zen-colors-border: var(--zenix-color-primary) !important;
+        --toolbarbutton-icon-fill: var(--zenix-color-primary) !important;
+        --lwt-text-color: var(--zenix-color-text) !important;
+        --toolbar-field-color: var(--zenix-color-text) !important;
+        --tab-selected-textcolor: var(--zenix-color-highlight) !important;
+        --toolbar-field-focus-color: var(--zenix-color-text) !important;
+        --toolbar-color: var(--zenix-color-text) !important;
+        --newtab-text-primary-color: var(--zenix-color-text) !important;
+        --arrowpanel-color: var(--zenix-color-text) !important;
+        --arrowpanel-background: var(--zenix-color-base) !important;
+        --sidebar-text-color: var(--zenix-color-text) !important;
+        --lwt-sidebar-text-color: var(--zenix-color-text) !important;
+        --lwt-sidebar-background-color: var(--zenix-color-crust) !important;
+        --toolbar-bgcolor: var(--zenix-color-surface0) !important;
+        --newtab-background-color: var(--zenix-color-base) !important;
+
+        --zen-themed-toolbar-bg: color-mix(in srgb,
+                var(--zenix-color-mantle) 60%,
+                transparent) !important;
+        --zen-main-browser-background: color-mix(in srgb,
+                var(--zenix-color-mantle) 60%,
+                transparent) !important;
+    }
+}
+
+/* Tab styles */
+@media (prefers-color-scheme: dark) {
+
+    /* Selected tab styles (focused window) */
+    :root:not(:-moz-window-inactive) [selected="true"] .tab-background {
+        background-color: color-mix(in srgb,
+                var(--zenix-color-base) 60%,
+                transparent) !important;
+        border: 1px solid --zenix-color-primary !important;
+        transition:
+            background-color 0.1s ease-in-out,
+            border 0.1s ease-in-out !important;
+    }
+
+    /* Selected tab styles (unfocused window) */
+    :root:-moz-window-inactive [selected="true"] .tab-background {
+        background-color: transparent !important;
+        border: 1px solid color-mix(in srgb, var(--zenix-color-primary) 50%, transparent) !important;
+        color: var(--zen-colors-secondary) !important;
+        transition:
+            background-color 0.1s ease-in-out,
+            border 0.1s ease-in-out !important;
+    }
+
+    /* Dim selected tab text when unfocused */
+    :root:-moz-window-inactive .tabbrowser-tab[selected="true"] {
+        color: color-mix(in srgb,
+                var(--zenix-color-highlight) 50%,
+                transparent) !important;
+        transition: color 0.1s ease-in-out !important;
+    }
+}
+
+/* URL bar and navigator toolbox styles */
+@media (prefers-color-scheme: dark) {
+
+    /* URL bar styles */
+    :root:-moz-window-inactive #urlbar,
+    :root:not(:-moz-window-inactive) #urlbar {
+        transition: color 0.1s ease-in-out !important;
+    }
+
+    :root:-moz-window-inactive #urlbar {
+        color: color-mix(in srgb,
+                var(--zenix-color-highlight) 50%,
+                transparent) !important;
+    }
+
+    /* Navigator toolbox styles */
+    :root:-moz-window-inactive #navigator-toolbox,
+    :root:not(:-moz-window-inactive) #navigator-toolbox {
+        transition: color 0.1s ease-in-out !important;
+    }
+
+    :root:-moz-window-inactive #navigator-toolbox {
+        color: color-mix(in srgb,
+                var(--zenix-color-highlight) 50%,
+                transparent) !important;
+    }
+}
+
+/* Other styles */
+@media (prefers-color-scheme: dark) {
+
+    /* Toolbar and sidebar styles */
+    #permissions-granted-icon {
+        color: var(--zenix-color-mantle) !important;
+    }
+
+    .sidebar-placesTree,
+    #zen-workspaces-button,
+    #urlbar-background,
+    .content-shortcuts {
+        background-color: var(--zenix-color-base) !important;
+    }
+
+    .content-shortcuts {
+        border-color: var(--zenix-color-primary) !important;
+    }
+
+    /* URL bar dropdown styles */
+    .urlbarView-url {
+        color: var(--zenix-color-primary) !important;
+    }
+
+    /* Bookmark panel styles */
+    #zenEditBookmarkPanelFaviconContainer {
+        background: var(--zenix-color-crust) !important;
+    }
+
+    /* Tabs toolbar */
+    #TabsToolbar {
+        background-color: transparent !important;
+    }
+
+    /* Toolbar button styles */
+    toolbar .toolbarbutton-1 {
+        &:not([disabled]) {
+
+            &:is([open], [checked])> :is(.toolbarbutton-icon,
+                .toolbarbutton-text,
+                .toolbarbutton-badge-stack) {
+                fill: var(--zenix-color-crust);
+            }
+        }
+    }
+}

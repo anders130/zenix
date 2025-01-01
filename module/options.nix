@@ -25,14 +25,16 @@
             colors = {
                 primary = mkColorOpt "#8aadf4";
                 secondary = mkColorOpt "#f5a97f";
-                borderLight = mkColorOpt "#cad3f5";
-                borderDark = mkColorOpt "#6e6c7e";
-                surface0 = mkColorOpt "#181926";
-                surface1 = mkColorOpt "#292c3c";
-                surface2 = mkColorOpt "#24273a";
-                overlay0 = mkColorOpt "#6e6c7e";
+                surface0 = mkColorOpt "#363a4f";
+                surface1 = mkColorOpt "#494d64";
+                surface2 = mkColorOpt "#5b6078";
+                overlay0 = mkColorOpt "#6e738d";
                 text = mkColorOpt "#cad3f5";
                 maroon = mkColorOpt "#ee99a0";
+                base = mkColorOpt "#24273a";
+                mantle = mkColorOpt "#1e2030";
+                crust = mkColorOpt "#181926";
+                highlight = mkColorOpt "#aac0f4";
 
                 blue = mkColorOpt "#8aadf4";
                 blueInvert = mkColorOpt "#8aadf4";

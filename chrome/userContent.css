@@ -1,0 +1,116 @@
+@media (prefers-color-scheme: dark) {
+
+    /* Common variables affecting all pages */
+    @-moz-document url-prefix("about:") {
+        :root {
+            --in-content-page-color: var(--zenix-color-text) !important;
+            --color-accent-primary: var(--zenix-color-primary) !important;
+            --color-accent-primary-hover: var(--zenix-color-highlight) !important;
+            --color-accent-primary-active: var(--zenix-color-purple-pale) !important;
+            background-color: var(--zenix-color-base) !important;
+            --in-content-page-background: var(--zenix-color-base) !important;
+        }
+    }
+
+    /* Variables and styles specific to about:newtab and about:home */
+    @-moz-document url("about:newtab"), url("about:home") {
+        :root {
+            --newtab-background-color: var(--zenix-color-base) !important;
+            --newtab-background-color-secondary: var(--zenix-color-surface0) !important;
+            --newtab-element-hover-color: var(--zenix-color-surface0) !important;
+            --newtab-text-primary-color: var(--zenix-color-text) !important;
+            --newtab-wordmark-color: var(--zenix-color-text) !important;
+            --newtab-primary-action-background: var(--zenix-color-primary) !important;
+        }
+
+        .icon {
+            color: var(--zenix-color-primary) !important;
+        }
+
+        .search-wrapper .logo-and-wordmark .logo {
+            background:
+                url("zen-logo-macchiato.svg"),
+                url("https://raw.githubusercontent.com/IAmJafeth/zen-browser/main/themes/Macchiato/Blue/zen-logo-macchiato.svg") no-repeat center !important;
+            display: inline-block !important;
+            height: 82px !important;
+            width: 82px !important;
+            background-size: 82px !important;
+        }
+
+        @media (max-width: 609px) {
+            .search-wrapper .logo-and-wordmark .logo {
+                background-size: 64px !important;
+                height: 64px !important;
+                width: 64px !important;
+            }
+        }
+
+        .card-outer:is(:hover, :focus, .active):not(.placeholder) .card-title {
+            color: var(--zenix-color-primary) !important;
+        }
+
+        .top-site-outer .search-topsite {
+            background-color: var(--zenix-color-primary) !important;
+        }
+
+        .compact-cards .card-outer .card-context .card-context-icon.icon-download {
+            fill: var(--zenix-color-green) !important;
+        }
+    }
+
+    /* Variables and styles specific to about:preferences */
+    @-moz-document url-prefix("about:preferences") {
+        :root {
+            --zen-colors-tertiary: var(--zenix-color-mantle) !important;
+            --in-content-text-color: var(--zenix-color-text) !important;
+            --link-color: var(--zenix-color-primary) !important;
+            --link-color-hover: var(--zenix-color-highlight) !important;
+            --zen-colors-primary: var(--zenix-color-surface0) !important;
+            --in-content-box-background: var(--zenix-color-surface0) !important;
+            --zen-primary-color: var(--zenix-color-primary) !important;
+        }
+
+        groupbox,
+        moz-card {
+            background: var(--zenix-color-base) !important;
+        }
+
+        button,
+        groupbox menulist {
+            background: var(--zenix-color-surface0) !important;
+            color: var(--zenix-color-text) !important;
+        }
+
+        .main-content {
+            background-color: var(--zenix-color-crust) !important;
+        }
+    }
+
+    /* Variables and styles specific to about:addons */
+    @-moz-document url-prefix("about:addons") {
+        :root {
+            --zen-dark-color-mix-base: var(--zenix-color-mantle) !important;
+            --background-color-box: var(--zenix-color-base) !important;
+        }
+    }
+
+    /* Variables and styles specific to about:protections */
+    @-moz-document url-prefix("about:protections") {
+        :root {
+            --zen-primary-color: var(--zenix-color-base) !important;
+            --social-color: var(--zenix-color-purple) !important;
+            --coockie-color: var(--zenix-color-cyan-pale) !important;
+            --fingerprinter-color: var(--zenix-color-yellow) !important;
+            --cryptominer-color: var(--zenix-color-blue-pale) !important;
+            --tracker-color: var(--zenix-color-green) !important;
+            --in-content-primary-button-background-hover: var(--zenix-color-surface1) !important;
+            --in-content-primary-button-text-color-hover: var(--zenix-color-text) !important;
+            --in-content-primary-button-background: var(--zenix-color-surface1) !important;
+            --in-content-primary-button-text-color: var(--zenix-color-text) !important;
+        }
+
+        .card {
+            background-color: var(--zenix-color-surface0) !important;
+        }
+    }
+}

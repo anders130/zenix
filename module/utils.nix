@@ -37,16 +37,10 @@ lib: rec {
         })
         |> listToAttrs;
 
-    mkUserChrome = vars: /*css*/''
-        @import url("zenix/findbar.css");
-        @import url("zenix/hide-titlebar-buttons.css");
-        @import url("zenix/tab-groups.css");
-
+    mkCssVars = vars: /*css*/''
         * {
             --zenix-color-primary: ${vars.colors.primary};
             --zenix-color-secondary: ${vars.colors.secondary};
-            --zenix-color-border-light: ${vars.colors.borderLight};
-            --zenix-color-border-dark: ${vars.colors.borderDark};
             --zenix-color-surface0: ${vars.colors.surface0};
             --zenix-color-surface1: ${vars.colors.surface1};
             --zenix-color-surface2: ${vars.colors.surface2};
@@ -55,6 +49,10 @@ lib: rec {
             --zenix-color-maroon: ${vars.colors.maroon};
             --zenix-glass-background: ${vars.glass.background};
             --zenix-glass-blur-radius: ${vars.glass.blurRadius};
+            --zenix-color-base: ${vars.colors.base};
+            --zenix-color-mantle: ${vars.colors.mantle};
+            --zenix-color-crust: ${vars.colors.crust};
+            --zenix-color-highlight: ${vars.colors.highlight};
 
             --zenix-color-blue: ${vars.colors.blue};
             --zenix-color-blue-invert: ${vars.colors.blueInvert};
@@ -94,6 +92,15 @@ lib: rec {
         }
     '';
 
+    mkUserChrome = vars: /*css*/''
+        @import url("zenix/findbar.css");
+        @import url("zenix/hide-titlebar-buttons.css");
+        @import url("zenix/tab-groups.css");
+        @import url("zenix/theme.css");
+    '' + mkCssVars vars;
+
+    mkUserContent = vars: mkCssVars vars + builtins.readFile ../chrome/userContent.css;
+
     mkFirefoxProfiles = cfg: cfg.profiles
         |> attrNames
         |> map (name: let pcfg = cfg.profiles.${name}; in {
@@ -113,6 +120,7 @@ lib: rec {
                     "browser.tabs.groups.enabled" = cfg.chrome.tabGroups;
                 };
                 userChrome = (mkUserChrome cfg.chrome.variables) + (if pcfg ? userChrome then pcfg.userChrome else "");
+                userContent = (mkUserContent cfg.chrome.variables) + (if pcfg ? userContent then pcfg.userContent else "");
             };
         })
         |> listToAttrs;

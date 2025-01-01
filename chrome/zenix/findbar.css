@@ -35,8 +35,7 @@
         border-radius: var(--zen-border-radius);
         background: var(--zenix-glass-background) !important;
         backdrop-filter: blur(var(--zenix-glass-blur-radius));
-        border: 1px solid light-dark(var(--zenix-color-border-light),
-                var(--zenix-color-border-dark)) !important;
+        border: 1px solid color-mix(in srgb, var(--zenix-color-primary) 60%, transparent) !important;
         opacity: 1;
         transition:
             background 0.2s ease,
@@ -45,10 +44,6 @@
             top 0.2s ease,
             box-shadow 0.2s ease !important;
         animation: initial-animation 0.2s ease;
-
-        @media (-moz-bool-pref: "zenix.findbar.wider-findbar") {
-            width: min(720px, 90%);
-        }
 
         &:is([hidden="true"]) {
             visibility: inherit !important;
@@ -83,8 +78,7 @@
                 width: 100% !important;
                 margin-top: 5px !important;
                 padding-bottom: 10px !important;
-                border-bottom: 1px solid light-dark(var(--zenix-color-border-light),
-                        var(--zenix-color-border-dark)) !important;
+                border-bottom: 1px solid color-mix(in srgb, var(--zenix-color-primary) 60%, transparent) !important;
 
                 &::before {
                     content: "";
