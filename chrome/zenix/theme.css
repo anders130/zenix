@@ -38,7 +38,7 @@
         background-color: color-mix(in srgb,
                 var(--zenix-color-base) 60%,
                 transparent) !important;
-        border: 1px solid --zenix-color-primary !important;
+        border: 1px solid var(--zenix-color-primary) !important;
         transition:
             background-color 0.1s ease-in-out,
             border 0.1s ease-in-out !important;
