@@ -118,6 +118,8 @@ lib: rec {
                     "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
                     "zenix.tab-groups.enabled" = cfg.chrome.tabGroups;
                     "browser.tabs.groups.enabled" = cfg.chrome.tabGroups;
+                    "zen.theme.accent-color" = cfg.chrome.variables.colors.primary;
+                    "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
                 };
                 userChrome = (mkUserChrome cfg.chrome.variables) + (if pcfg ? userChrome then pcfg.userChrome else "");
                 userContent = (mkUserContent cfg.chrome.variables) + (if pcfg ? userContent then pcfg.userContent else "");
