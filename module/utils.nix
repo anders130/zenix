@@ -113,7 +113,7 @@ lib: rec {
                 # Move to zen folder
                 path = "../../.zen/${name}";
 
-                settings = {
+                settings = pcfg.settings // {
                     "zenix.findbar.disabled" = !cfg.chrome.findbar;
                     "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
                     "zenix.tab-groups.enabled" = cfg.chrome.tabGroups;
