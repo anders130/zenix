@@ -26,12 +26,14 @@ A flake for [zen-browser](https://github.com/zen-browser/desktop). It wraps the 
         };
         profiles = rec {
             default = {
+                id = 0;
                 isDefault = true;
                 extensions = with pkgs.nur.repos.rycee.firefox-addons; [
                     ublock-origin
                 ];
             };
             work = default // {
+                id = 1;
                 isDefault = false;
             };
         };

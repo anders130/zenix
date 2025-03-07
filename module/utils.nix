@@ -1,9 +1,11 @@
 lib: rec {
-    inherit (lib) mapAttrsToList;
+    inherit (lib) mapAttrsToList imap0;
     inherit (builtins) concatStringsSep listToAttrs attrNames;
 
     generateIni = profiles: let
-        profileList = mapAttrsToList (name: profile: profile // {inherit name;}) profiles;
+        profileList = profiles
+            |> attrNames
+            |> imap0 (id: name: let profile = profiles.${name}; in profile // {inherit name id;});
         profileToStr = profile: ''
             [Profile${toString profile.id}]
             Name=${profile.name}
@@ -103,17 +105,17 @@ lib: rec {
 
     mkFirefoxProfiles = cfg: cfg.profiles
         |> attrNames
-        |> map (name: let pcfg = cfg.profiles.${name}; in {
+        |> imap0 (index: name: let pcfg = cfg.profiles.${name}; in {
             name = "zen-${name}";
             value = pcfg // {
                 inherit name;
                 # Avoid conflicts with Firefox profiles
-                id = pcfg.id + 100;
+                id = (pcfg.id or index) + 100;
                 isDefault = false;
                 # Move to zen folder
                 path = "../../.zen/${name}";
 
-                settings = pcfg.settings // {
+                settings = pcfg.settings or {} // {
                     "zenix.findbar.disabled" = !cfg.chrome.findbar;
                     "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
                     "zenix.tab-groups.enabled" = cfg.chrome.tabGroups;

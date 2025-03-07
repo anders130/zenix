@@ -11,7 +11,9 @@
     };
     profiles = lib.mkOption {
         type = lib.types.attrsOf lib.types.anything;
-        default = {};
+        default = {
+            id = 0;
+        };
         description = "This can be used like home-manager's firefox profiles";
     };
     chrome = {
