@@ -1,96 +1,19 @@
 lib: rec {
     inherit (lib) mapAttrsToList imap0;
-    inherit (builtins) concatStringsSep listToAttrs attrNames;
+    inherit (builtins) concatStringsSep listToAttrs attrNames readDir readFile;
 
-    generateIni = profiles: let
-        profileList = profiles
-            |> attrNames
-            |> imap0 (id: name: let profile = profiles.${name}; in profile // {inherit name id;});
-        profileToStr = profile: ''
-            [Profile${toString profile.id}]
-            Name=${profile.name}
-            IsRelative=1
-            Path=${profile.name}
-            ZenAvatarPath=chrome://browser/content/zen-avatars/avatar-55.svg
-            Default=${
-                if profile.isDefault
-                then "1"
-                else "0"
-            }
-        '';
+    camelToKebab = let
+        inherit (lib.strings) match stringAsChars toLower;
+        isUpper = match "[A-Z]";
     in
-        concatStringsSep "\n\n" ((map profileToStr profileList)
-            ++ [
-                ''
-                    [General]
-                    StartWithLastProfile=1
-                    Version=2
-                ''
-            ]);
+        stringAsChars (c: if isUpper c != null then "-${toLower c}" else c);
 
-    mkChromeDirectories = zenixProfiles: zenixProfiles
-        |> attrNames
-        |> map (name: {
-            name = ".zen/${name}/chrome/zenix";
-            value = {
-                source = ../chrome/zenix;
-                recursive = true;
-            };
-        })
-        |> listToAttrs;
-
-    mkCssVars = vars: /*css*/''
+    mkCssVars = vars: ''
         * {
-            --zenix-color-primary: ${vars.colors.primary};
-            --zenix-color-secondary: ${vars.colors.secondary};
-            --zenix-color-surface0: ${vars.colors.surface0};
-            --zenix-color-surface1: ${vars.colors.surface1};
-            --zenix-color-surface2: ${vars.colors.surface2};
-            --zenix-color-overlay0: ${vars.colors.overlay0};
-            --zenix-color-text: ${vars.colors.text};
-            --zenix-color-maroon: ${vars.colors.maroon};
-            --zenix-glass-background: ${vars.glass.background};
-            --zenix-glass-blur-radius: ${vars.glass.blurRadius};
-            --zenix-color-base: ${vars.colors.base};
-            --zenix-color-mantle: ${vars.colors.mantle};
-            --zenix-color-crust: ${vars.colors.crust};
-            --zenix-color-highlight: ${vars.colors.highlight};
-
-            --zenix-color-blue: ${vars.colors.blue};
-            --zenix-color-blue-invert: ${vars.colors.blueInvert};
-            --zenix-color-blue-pale: ${vars.colors.bluePale};
-
-            --zenix-color-purple: ${vars.colors.purple};
-            --zenix-color-purple-invert: ${vars.colors.purpleInvert};
-            --zenix-color-purple-pale: ${vars.colors.purplePale};
-
-            --zenix-color-cyan: ${vars.colors.cyan};
-            --zenix-color-cyan-invert: ${vars.colors.cyanInvert};
-            --zenix-color-cyan-pale: ${vars.colors.cyanPale};
-
-            --zenix-color-orange: ${vars.colors.orange};
-            --zenix-color-orange-invert: ${vars.colors.orangeInvert};
-            --zenix-color-orange-pale: ${vars.colors.orangePale};
-
-            --zenix-color-yellow: ${vars.colors.yellow};
-            --zenix-color-yellow-invert: ${vars.colors.yellowInvert};
-            --zenix-color-yellow-pale: ${vars.colors.yellowPale};
-
-            --zenix-color-pink: ${vars.colors.pink};
-            --zenix-color-pink-invert: ${vars.colors.pinkInvert};
-            --zenix-color-pink-pale: ${vars.colors.pinkPale};
-
-            --zenix-color-green: ${vars.colors.green};
-            --zenix-color-green-invert: ${vars.colors.greenInvert};
-            --zenix-color-green-pale: ${vars.colors.greenPale};
-
-            --zenix-color-red: ${vars.colors.red};
-            --zenix-color-red-invert: ${vars.colors.redInvert};
-            --zenix-color-red-pale: ${vars.colors.redPale};
-
-            --zenix-color-gray: ${vars.colors.gray};
-            --zenix-color-gray-invert: ${vars.colors.grayInvert};
-            --zenix-color-gray-pale: ${vars.colors.grayPale};
+            /* colors */
+            ${concatStringsSep "\n" (mapAttrsToList (name: value: "--zenix-color-${camelToKebab name}: ${value};") vars.colors)}
+            /* glass */
+            ${concatStringsSep "\n" (mapAttrsToList (name: value: "--zenix-glass-${camelToKebab name}: ${value};") vars.glass)}
         }
     '';
 
@@ -101,30 +24,68 @@ lib: rec {
         @import url("zenix/theme.css");
     '' + mkCssVars vars;
 
-    mkUserContent = vars: mkCssVars vars + builtins.readFile ../chrome/userContent.css;
+    mkUserContent = vars: mkCssVars vars + readFile ../chrome/userContent.css;
+
+    prepareProfiles = profiles: profiles
+        |> attrNames
+        |> imap0 (index: name: let profile = profiles.${name}; in profile // {
+            inherit name;
+            id = profile.id or index;
+
+        });
+
+    generateIni = profiles: profiles
+        |> prepareProfiles
+        |> map (profile: ''
+            [Profile${toString profile.id}]
+            Name=${profile.name}
+            IsRelative=1
+            Path=${profile.name}
+            ZenAvatarPath=chrome://browser/content/zen-avatars/avatar-55.svg
+            Default=${
+                if profile.isDefault
+                then "1"
+                else "0"
+            }
+        '')
+        |> (p: p ++ [''
+            [General]
+            StartWithLastProfile=1
+            Version=2
+        ''])
+        |> concatStringsSep "\n\n";
 
     mkFirefoxProfiles = cfg: cfg.profiles
-        |> attrNames
-        |> imap0 (index: name: let pcfg = cfg.profiles.${name}; in {
-            name = "zen-${name}";
-            value = pcfg // {
-                inherit name;
+        |> prepareProfiles
+        |> map (profile: profile // {
+            name = "zen-${profile.name}";
+            value = profile // {
                 # Avoid conflicts with Firefox profiles
-                id = (pcfg.id or index) + 100;
+                id = profile.id + 100;
                 isDefault = false;
                 # Move to zen folder
-                path = "../../.zen/${name}";
-
-                settings = pcfg.settings or {} // {
-                    "zenix.findbar.disabled" = !cfg.chrome.findbar;
-                    "zenix.hide-titlebar-buttons" = cfg.chrome.hideTitlebarButtons;
-                    "zenix.tab-groups.enabled" = cfg.chrome.tabGroups;
-                    "browser.tabs.groups.enabled" = cfg.chrome.tabGroups;
-                    "zen.theme.accent-color" = cfg.chrome.variables.colors.primary;
+                path = "../../.zen/${profile.name}";
+                settings = profile.settings or {} // (with cfg.chrome; {
+                    "zenix.findbar.disabled" = !findbar;
+                    "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
+                    "zenix.tab-groups.enabled" = tabGroups;
+                    "browser.tabs.groups.enabled" = tabGroups;
+                    "zen.theme.accent-color" = variables.colors.primary;
                     "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
-                };
-                userChrome = (mkUserChrome cfg.chrome.variables) + (if pcfg ? userChrome then pcfg.userChrome else "");
-                userContent = (mkUserContent cfg.chrome.variables) + (if pcfg ? userContent then pcfg.userContent else "");
+                });
+                userChrome = (mkUserChrome cfg.chrome.variables) + (profile.userChrome or "");
+                userContent = (mkUserContent cfg.chrome.variables) + (profile.userContent or "");
+            };
+        })
+        |> listToAttrs;
+
+    mkChromeDirectories = profiles: profiles
+        |> attrNames
+        |> map (name: {
+            name = ".zen/${name}/chrome/zenix";
+            value = {
+                source = ../chrome/zenix;
+                recursive = true;
             };
         })
         |> listToAttrs;
