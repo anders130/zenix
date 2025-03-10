@@ -6,6 +6,8 @@
         --zen-colors-secondary: var(--zenix-color-surface0) !important;
         --zen-colors-tertiary: var(--zenix-color-mantle) !important;
         --zen-colors-border: var(--zenix-color-primary) !important;
+        --zen-branding-dark: var(--zenix-color-crust) !important;
+        --zen-branding-paper: var(--zenix-color-primary) !important;
         --toolbarbutton-icon-fill: var(--zenix-color-primary) !important;
         --lwt-text-color: var(--zenix-color-text) !important;
         --toolbar-field-color: var(--zenix-color-text) !important;
