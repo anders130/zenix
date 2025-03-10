@@ -8,6 +8,10 @@
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        zen-browser = {
+            url = "github:youwen5/zen-browser-flake";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
 
     outputs = inputs:
@@ -16,10 +20,7 @@
             flake = {
                 homeModules.default = import ./module inputs;
                 overlays.default = final: prev: {
-                    zen-browser-unwrapped = prev.callPackage ./package.nix {};
-                    zen-browser = prev.wrapFirefox final.zen-browser-unwrapped {
-                        pname = "zen-browser";
-                    };
+                    inherit (inputs.zen-browser.packages.${prev.system}) zen-browser-unwrapped zen-browser;
                 };
             };
             perSystem = {
