@@ -1,26 +1,30 @@
-self: {
+inputs: {
     config,
     lib,
-    pkgs,
     ...
 }: let
     cfg = config.programs.zenix;
     utils = import ./utils.nix lib;
-    inherit (utils) generateIni mkFirefoxProfiles mkChromeDirectories;
+    inherit (utils) generateIni mkChromeDirectories;
+    mkFirefoxModule = import "${inputs.home-manager}/modules/programs/firefox/mkFirefoxModule.nix";
 in {
-    options.programs.zenix = import ./options.nix {inherit lib pkgs self;};
+    imports = [
+        (mkFirefoxModule {
+            modulePath = ["programs" "zenix"];
+            name = "zenix";
+            description = "A nixos module for the zen-browser";
+            wrappedPackageName = "zen-browser";
+            unwrappedPackageName = "zen-browser-unwrapped";
+            visible = true;
+            platforms.linux.configPath = ".zen";
+        })
+    ];
+    options.programs.zenix = import ./options.nix lib;
     config = lib.mkIf cfg.enable {
-        home = {
-            packages = [cfg.package];
-            file =
-                {
-                    ".zen/profiles.ini".text = generateIni cfg.profiles;
-                }
-                // mkChromeDirectories cfg.profiles;
-        };
-        programs.firefox = {
-            enable = true;
-            profiles = mkFirefoxProfiles cfg;
-        };
+        home.file =
+            {
+                ".zen/profiles.ini".text = generateIni cfg.profiles;
+            }
+            // mkChromeDirectories cfg.profiles;
     };
 }

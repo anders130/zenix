@@ -14,7 +14,7 @@
         inputs.flake-parts.lib.mkFlake {inherit inputs;} {
             systems = ["x86_64-linux"];
             flake = {
-                flake.hmModules.default = import ./module inputs.self;
+                homeModules.default = import ./module inputs;
                 overlays.default = final: prev: {
                     zen-browser-unwrapped = prev.callPackage ./package.nix {};
                     zen-browser = prev.wrapFirefox final.zen-browser-unwrapped {
