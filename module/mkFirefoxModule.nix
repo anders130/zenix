@@ -443,7 +443,18 @@ in {
                     };
 
                     userChrome = mkOption {
-                        type = types.oneOf [types.lines types.path];
+                        type = types.oneOf [types.lines types.path (types.submodule {
+                                options = {
+                                    source = mkOption {
+                                        type = types.path;
+                                        description = "Path to the source file.";
+                                    };
+                                    recursive = mkOption {
+                                        type = types.bool;
+                                        default = false;
+                                    };
+                                };
+                            })];
                         default = "";
                         description = "Custom ${appName} user chrome CSS.";
                         example = ''
@@ -462,7 +473,18 @@ in {
                     };
 
                     userContent = mkOption {
-                        type = types.oneOf [types.lines types.path];
+                        type = types.oneOf [types.lines types.path (types.submodule {
+                                options = {
+                                    source = mkOption {
+                                        type = types.path;
+                                        description = "Path to the source file.";
+                                    };
+                                    recursive = mkOption {
+                                        type = types.bool;
+                                        default = false;
+                                    };
+                                };
+                            })];
                         default = "";
                         description = "Custom ${appName} user content CSS.";
                         example = ''
@@ -929,18 +951,24 @@ in {
                                 {
                                     "${profilesPath}/${profile.path}/.keep".text = "";
 
-                                    "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkIf (profile.userChrome != "" && !(builtins.isString profile.userChrome)) {
-                                        source = profile.userChrome;
-                                    };
+                                    "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkIf (profile.userChrome != "" && !(builtins.isString profile.userChrome)) (
+                                        if builtins.isPath profile.userChrome then {
+                                            source = profile.userChrome;
+                                        } else {
+                                            inherit (profile.userChrome) source recursive;
+                                        });
                                     "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (profile.userChrome != "" || defaultProfileConfig.userChrome != "") {
-                                        text = defaultProfileConfig.userChrome + (if builtins.isString profile.userChrome then profile.userChrome else "@import url(\"extraUserChrome.css\");");
+                                        text = (if builtins.isString profile.userChrome then profile.userChrome else "@import url(\"extraUserChrome.css\");") + defaultProfileConfig.userChrome;
                                     };
 
-                                    "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkIf (profile.userContent != "" && !(builtins.isString profile.userContent)) {
-                                        source = profile.userContent;
-                                    };
+                                    "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkIf (profile.userContent != "" && !(builtins.isString profile.userContent)) (
+                                        if builtins.isPath profile.userChrome then {
+                                            source = profile.userContent;
+                                        } else {
+                                            inherit (profile.userContent) source recursive;
+                                        });
                                     "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (profile.userContent != "" || defaultProfileConfig.userContent != "") {
-                                        text = defaultProfileConfig.userContent + (if builtins.isString profile.userContent then profile.userContent else "@import url(\"extraUserContent.css\");");
+                                        text = (if builtins.isString profile.userContent then profile.userContent else "@import url(\"extraUserContent.css\");") + defaultProfileConfig.userContent;
                                     };
 
                                     "${profilesPath}/${profile.path}/user.js" = let
