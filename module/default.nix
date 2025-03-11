@@ -6,7 +6,6 @@ inputs: {
     cfg = config.programs.zenix;
     utils = import ./utils.nix lib;
     inherit (utils) generateIni mkChromeDirectories mkUserChrome mkUserContent;
-    inherit (builtins) mapAttrs;
     mkFirefoxModule = import ./mkFirefoxModule.nix;
 in {
     imports = [
