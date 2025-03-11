@@ -20,7 +20,6 @@ lib: rec {
     mkUserChrome = vars: /*css*/''
         @import url("zenix/findbar.css");
         @import url("zenix/hide-titlebar-buttons.css");
-        @import url("zenix/tab-groups.css");
         @import url("zenix/theme.css");
     '' + mkCssVars vars;
 
@@ -54,30 +53,6 @@ lib: rec {
             Version=2
         ''])
         |> concatStringsSep "\n\n";
-
-    mkFirefoxProfiles = cfg: cfg.profiles
-        |> prepareProfiles
-        |> map (profile: profile // {
-            name = "zen-${profile.name}";
-            value = profile // {
-                # Avoid conflicts with Firefox profiles
-                id = profile.id + 100;
-                isDefault = false;
-                # Move to zen folder
-                path = "../../.zen/${profile.name}";
-                settings = profile.settings or {} // (with cfg.chrome; {
-                    "zenix.findbar.disabled" = !findbar;
-                    "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
-                    "zenix.tab-groups.enabled" = tabGroups;
-                    "browser.tabs.groups.enabled" = tabGroups;
-                    "zen.theme.accent-color" = variables.colors.primary;
-                    "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
-                });
-                userChrome = (mkUserChrome cfg.chrome.variables) + (profile.userChrome or "");
-                userContent = (mkUserContent cfg.chrome.variables) + (profile.userContent or "");
-            };
-        })
-        |> listToAttrs;
 
     mkChromeDirectories = profiles: profiles
         |> attrNames

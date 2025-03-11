@@ -1,21 +1,4 @@
-{
-    lib,
-    pkgs,
-    self,
-}: {
-    enable = lib.mkEnableOption "zenix";
-    package = lib.mkOption {
-        type = lib.types.package;
-        description = "Package for zen-browser";
-        default = self.inputs.zen-browser.packages.${pkgs.system}.default;
-    };
-    profiles = lib.mkOption {
-        type = lib.types.attrsOf lib.types.anything;
-        default = {
-            id = 0;
-        };
-        description = "This can be used like home-manager's firefox profiles";
-    };
+lib: {
     chrome = {
         variables = let
             mkColorOpt = default:
@@ -84,10 +67,6 @@
             default = true;
         };
         hideTitlebarButtons = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-        };
-        tabGroups = lib.mkOption {
             type = lib.types.bool;
             default = false;
         };
