@@ -20,10 +20,10 @@ in {
             platforms.linux.configPath = ".zen";
             defaultProfileConfig = {
                 settings = with cfg.chrome; {
-                    "zenix.findbar.disabled" = true;
-                    "zenix.hide-titlebar-buttons" = true;
-                    "zenix.tab-groups.enabled" = true;
-                    "browser.tabs.groups.enabled" = true;
+                    "zenix.findbar.disabled" = !findbar;
+                    "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
+                    "zenix.tab-groups.enabled" = tabGroups;
+                    "browser.tabs.groups.enabled" = tabGroups;
                     "zen.theme.accent-color" = variables.colors.primary;
                     "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
                 };
