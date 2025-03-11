@@ -20,7 +20,6 @@ lib: rec {
     mkUserChrome = vars: /*css*/''
         @import url("zenix/findbar.css");
         @import url("zenix/hide-titlebar-buttons.css");
-        @import url("zenix/tab-groups.css");
         @import url("zenix/theme.css");
     '' + mkCssVars vars;
 
