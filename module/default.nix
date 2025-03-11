@@ -21,8 +21,6 @@ in {
                 settings = with cfg.chrome; {
                     "zenix.findbar.disabled" = !findbar;
                     "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
-                    "zenix.tab-groups.enabled" = tabGroups;
-                    "browser.tabs.groups.enabled" = tabGroups;
                     "zen.theme.accent-color" = variables.colors.primary;
                     "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
                 };

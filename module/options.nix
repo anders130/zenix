@@ -70,9 +70,5 @@ lib: {
             type = lib.types.bool;
             default = false;
         };
-        tabGroups = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-        };
     };
 }
