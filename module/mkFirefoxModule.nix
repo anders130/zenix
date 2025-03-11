@@ -9,6 +9,7 @@
     visible ? false,
     enableBookmarks ? true,
     defaultProfileConfig ? {},
+    homeManagerPath,
 }: {
     config,
     lib,
@@ -599,7 +600,7 @@ in {
 
                     search = mkOption {
                         type = types.submodule (args:
-                            import ./profiles/search.nix {
+                            import "${homeManagerPath}/modules/programs/firefox/profiles/search.nix" {
                                 inherit (args) config;
                                 inherit lib pkgs appName;
                                 package = cfg.finalPackage;
@@ -922,47 +923,39 @@ in {
 
             home.packages = lib.optional (cfg.finalPackage != null) cfg.finalPackage;
 
-            mozilla.firefoxNativeMessagingHosts =
-                cfg.nativeMessagingHosts
-                # package configured native messaging hosts (entire browser actually)
-                ++ (lib.optional (cfg.finalPackage != null) cfg.finalPackage);
-
-            home.file = mkMerge ([
-                    {
-                        "${cfg.configPath}/profiles.ini" =
-                            mkIf (cfg.profiles != {}) {text = profilesIni;};
-                    }
-                ]
-                ++ flip mapAttrsToList cfg.profiles (_: profile:
+            home.file = mkMerge (flip mapAttrsToList cfg.profiles (_: profile:
                     # Merge the regular profile settings with extension settings
                         mkMerge ([
                                 {
                                     "${profilesPath}/${profile.path}/.keep".text = "";
 
-                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (profile.userChrome != "") (let
-                                        key =
-                                            if builtins.isString profile.userChrome
-                                            then "text"
-                                            else "source";
-                                    in {"${key}" = profile.userChrome;});
-
-                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (profile.userContent != "") (let
-                                        key =
-                                            if builtins.isString profile.userContent
-                                            then "text"
-                                            else "source";
-                                    in {"${key}" = profile.userContent;});
-
-                                    "${profilesPath}/${profile.path}/user.js" = mkIf (profile.preConfig
-                                        != ""
-                                        || profile.settings != {}
-                                        || profile.extraConfig != ""
-                                        || profile.bookmarks != []) {
-                                        text =
-                                            mkUserJs profile.preConfig profile.settings profile.extraConfig
-                                            profile.bookmarks
-                                            profile.extensions.settings;
+                                    "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkIf (profile.userChrome != "" && !(builtins.isString profile.userChrome)) {
+                                        source = profile.userChrome;
                                     };
+                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (profile.userChrome != "" || defaultProfileConfig.userChrome != "") {
+                                        text = defaultProfileConfig.userChrome + (if builtins.isString profile.userChrome then profile.userChrome else "@import url(\"extraUserChrome.css\");");
+                                    };
+
+                                    "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkIf (profile.userContent != "" && !(builtins.isString profile.userContent)) {
+                                        source = profile.userContent;
+                                    };
+                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (profile.userContent != "" || defaultProfileConfig.userContent != "") {
+                                        text = defaultProfileConfig.userContent + (if builtins.isString profile.userContent then profile.userContent else "@import url(\"extraUserContent.css\");");
+                                    };
+
+                                    "${profilesPath}/${profile.path}/user.js" = let
+                                        settings = profile.settings or {} // defaultProfileConfig.settings;
+                                    in
+                                        mkIf (profile.preConfig
+                                            != ""
+                                            || settings != {}
+                                            || profile.extraConfig != ""
+                                            || profile.bookmarks != []) {
+                                            text =
+                                                mkUserJs profile.preConfig settings profile.extraConfig
+                                                profile.bookmarks
+                                                profile.extensions.settings;
+                                        };
 
                                     "${profilesPath}/${profile.path}/containers.json" = mkIf (profile.containers != {}) {
                                         text = mkContainersJson profile.containers;
