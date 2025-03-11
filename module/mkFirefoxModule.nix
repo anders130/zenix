@@ -945,31 +945,28 @@ in {
 
             home.packages = lib.optional (cfg.finalPackage != null) cfg.finalPackage;
 
-            home.file = mkMerge (flip mapAttrsToList cfg.profiles (_: profile:
+            home.file = mkMerge (flip mapAttrsToList cfg.profiles (_: profile: let
+                mkExtraCss = userCss: mkIf (userCss != "" && !(builtins.isString userCss)) (
+                    if builtins.isPath userCss
+                    then {source = profile.userChrome;}
+                    else {inherit (profile.userChrome) source recursive;});
+                mkUserCss = userCss: defaultCss: extraFilename: mkIf (userCss != "" || defaultCss != "") {
+                    text =
+                        if builtins.isString userCss
+                        then defaultCss + "\n" + userCss
+                        else "@import url(\"${extraFilename}\");\n" + defaultCss;
+                };
+                in
                     # Merge the regular profile settings with extension settings
                         mkMerge ([
                                 {
                                     "${profilesPath}/${profile.path}/.keep".text = "";
 
-                                    "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkIf (profile.userChrome != "" && !(builtins.isString profile.userChrome)) (
-                                        if builtins.isPath profile.userChrome then {
-                                            source = profile.userChrome;
-                                        } else {
-                                            inherit (profile.userChrome) source recursive;
-                                        });
-                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (profile.userChrome != "" || defaultProfileConfig.userChrome != "") {
-                                        text = (if builtins.isString profile.userChrome then profile.userChrome else "@import url(\"extraUserChrome.css\");") + defaultProfileConfig.userChrome;
-                                    };
+                                    "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkExtraCss profile.userChrome;
+                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkUserCss profile.userChrome defaultProfileConfig.userChrome "extraUserChrome.css";
 
-                                    "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkIf (profile.userContent != "" && !(builtins.isString profile.userContent)) (
-                                        if builtins.isPath profile.userChrome then {
-                                            source = profile.userContent;
-                                        } else {
-                                            inherit (profile.userContent) source recursive;
-                                        });
-                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (profile.userContent != "" || defaultProfileConfig.userContent != "") {
-                                        text = (if builtins.isString profile.userContent then profile.userContent else "@import url(\"extraUserContent.css\");") + defaultProfileConfig.userContent;
-                                    };
+                                    "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkExtraCss profile.userContent;
+                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkUserCss profile.userContent defaultProfileConfig.userContent "extraUserContent.css";
 
                                     "${profilesPath}/${profile.path}/user.js" = let
                                         settings = profile.settings or {} // defaultProfileConfig.settings;
