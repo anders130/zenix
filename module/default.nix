@@ -6,7 +6,7 @@ inputs: {
     cfg = config.programs.zenix;
     utils = import ./utils.nix lib;
     inherit (utils) generateIni mkChromeDirectories;
-    mkFirefoxModule = import "${inputs.home-manager}/modules/programs/firefox/mkFirefoxModule.nix";
+    mkFirefoxModule = import ./mkFirefoxModule.nix;
 in {
     imports = [
         (mkFirefoxModule {
