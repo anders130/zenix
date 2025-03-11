@@ -16,10 +16,10 @@ A flake for [zen-browser](https://github.com/zen-browser/desktop). It wraps the 
 
 ```nix
 {
-    imports = [inputs.zenix.hmModules.default];
+    imports = [inputs.zenix.homeModules.default];
+    nixpkgs.overlays = [inputs.zenix.overlays.default];
     programs.zenix = {
         enable = true;
-        package = pkgs.zen-browser;
         chrome = {
             findbar = true;
             hideTitlebarButtons = true;
@@ -28,7 +28,7 @@ A flake for [zen-browser](https://github.com/zen-browser/desktop). It wraps the 
             default = {
                 id = 0;
                 isDefault = true;
-                extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+                extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
                     ublock-origin
                 ];
             };
