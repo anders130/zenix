@@ -139,3 +139,22 @@
         }
     }
 }
+
+/* Compact mode */
+:has([zen-has-hover="true"]) {
+
+    #titlebar,
+    #nav-bar {
+        backdrop-filter: blur(var(--zenix-glass-blur-radius));
+    }
+
+    #nav-bar {
+        border-bottom: 1px solid var(--zen-colors-border) !important;
+        border-radius: var(--zen-border-radius);
+    }
+
+    #zen-appcontent-navbar-container {
+        border: none;
+        background: transparent;
+    }
+}

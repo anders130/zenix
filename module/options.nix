@@ -1,5 +1,12 @@
 lib: {
     chrome = {
+        enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = ''
+                Whether to enable the Zenix theme.
+            '';
+        };
         variables = let
             mkColorOpt = default:
                 lib.mkOption {

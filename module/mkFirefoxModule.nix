@@ -951,10 +951,11 @@ in {
                     then {source = profile.userChrome;}
                     else {inherit (profile.userChrome) source recursive;});
                 mkUserCss = userCss: defaultCss: extraFilename: mkIf (userCss != "" || defaultCss != "") {
-                    text =
+                    text = defaultCss + "\n" + (
                         if builtins.isString userCss
-                        then defaultCss + "\n" + userCss
-                        else "@import url(\"${extraFilename}\");\n" + defaultCss;
+                        then userCss
+                        else "@import url(\"${extraFilename}\");"
+                    );
                 };
                 in
                     # Merge the regular profile settings with extension settings
@@ -963,13 +964,13 @@ in {
                                     "${profilesPath}/${profile.path}/.keep".text = "";
 
                                     "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkExtraCss profile.userChrome;
-                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkUserCss profile.userChrome defaultProfileConfig.userChrome "extraUserChrome.css";
+                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (defaultProfileConfig ? userChrome) (mkUserCss profile.userChrome defaultProfileConfig.userChrome "extraUserChrome.css");
 
                                     "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkExtraCss profile.userContent;
-                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkUserCss profile.userContent defaultProfileConfig.userContent "extraUserContent.css";
+                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (defaultProfileConfig ? userContent) (mkUserCss profile.userContent defaultProfileConfig.userContent "extraUserContent.css");
 
                                     "${profilesPath}/${profile.path}/user.js" = let
-                                        settings = profile.settings or {} // defaultProfileConfig.settings;
+                                        settings = profile.settings or {} // defaultProfileConfig.settings or {};
                                     in
                                         mkIf (profile.preConfig
                                             != ""

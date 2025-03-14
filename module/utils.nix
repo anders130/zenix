@@ -1,6 +1,6 @@
 lib: rec {
     inherit (lib) mapAttrsToList imap0;
-    inherit (builtins) concatStringsSep listToAttrs attrNames readDir readFile;
+    inherit (builtins) attrNames concatMap concatStringsSep listToAttrs readDir readFile;
 
     camelToKebab = let
         inherit (lib.strings) match stringAsChars toLower;
@@ -16,14 +16,6 @@ lib: rec {
             ${concatStringsSep "\n" (mapAttrsToList (name: value: "--zenix-glass-${camelToKebab name}: ${value};") vars.glass)}
         }
     '';
-
-    mkUserChrome = vars: /*css*/''
-        @import url("zenix/findbar.css");
-        @import url("zenix/hide-titlebar-buttons.css");
-        @import url("zenix/theme.css");
-    '' + mkCssVars vars;
-
-    mkUserContent = vars: mkCssVars vars + readFile ../chrome/userContent.css;
 
     prepareProfiles = profiles: profiles
         |> attrNames
@@ -54,14 +46,31 @@ lib: rec {
         ''])
         |> concatStringsSep "\n\n";
 
-    mkChromeDirectories = profiles: profiles
+    mkZenixFiles = cfg: cfg.profiles
         |> attrNames
-        |> map (name: {
-            name = ".zen/${name}/chrome/zenix";
-            value = {
-                source = ../chrome/zenix;
-                recursive = true;
-            };
-        })
+        |> concatMap (name: [
+            {
+                name = ".zen/profiles.ini";
+                value.text = generateIni cfg.profiles;
+            }
+            {
+                name = ".zen/${name}/chrome/colors.css";
+                value.text = mkCssVars cfg.chrome.variables;
+            }
+            {
+                name = ".zen/${name}/chrome/zenix";
+                value = {
+                    source = ../chrome/zenix;
+                    recursive = true;
+                };
+            }
+            {
+                name = ".zen/${name}/chrome/zenix-pages";
+                value = {
+                    source = ../chrome/zenix-pages;
+                    recursive = true;
+                };
+            }
+        ])
         |> listToAttrs;
 }
