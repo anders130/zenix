@@ -16,7 +16,7 @@ in {
             unwrappedPackageName = "zen-browser-unwrapped";
             visible = true;
             platforms.linux.configPath = ".zen";
-            defaultProfileConfig = {
+            defaultProfileConfig = if cfg.chrome.enable then {
                 settings = with cfg.chrome; {
                     "zenix.findbar.disabled" = !findbar;
                     "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
@@ -33,7 +33,7 @@ in {
                     @import url("colors.css");
                     @import url("zenix-pages/aboutPages.css");
                 '';
-            };
+            } else {};
             homeManagerPath = inputs.home-manager;
         })
     ];

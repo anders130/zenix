@@ -964,13 +964,13 @@ in {
                                     "${profilesPath}/${profile.path}/.keep".text = "";
 
                                     "${profilesPath}/${profile.path}/chrome/extraUserChrome.css" = mkExtraCss profile.userChrome;
-                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkUserCss profile.userChrome defaultProfileConfig.userChrome "extraUserChrome.css";
+                                    "${profilesPath}/${profile.path}/chrome/userChrome.css" = mkIf (defaultProfileConfig ? userChrome) (mkUserCss profile.userChrome defaultProfileConfig.userChrome "extraUserChrome.css");
 
                                     "${profilesPath}/${profile.path}/chrome/extraUserContent.css" = mkExtraCss profile.userContent;
-                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkUserCss profile.userContent defaultProfileConfig.userContent "extraUserContent.css";
+                                    "${profilesPath}/${profile.path}/chrome/userContent.css" = mkIf (defaultProfileConfig ? userContent) (mkUserCss profile.userContent defaultProfileConfig.userContent "extraUserContent.css");
 
                                     "${profilesPath}/${profile.path}/user.js" = let
-                                        settings = profile.settings or {} // defaultProfileConfig.settings;
+                                        settings = profile.settings or {} // defaultProfileConfig.settings or {};
                                     in
                                         mkIf (profile.preConfig
                                             != ""
