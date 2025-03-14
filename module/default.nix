@@ -5,7 +5,6 @@ inputs: {
 }: let
     cfg = config.programs.zenix;
     utils = import ./utils.nix lib;
-    inherit (utils) generateIni mkChromeDirectories mkUserChrome mkUserContent;
     mkFirefoxModule = import ./mkFirefoxModule.nix;
 in {
     imports = [
@@ -24,18 +23,22 @@ in {
                     "zen.theme.accent-color" = variables.colors.primary;
                     "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
                 };
-                userChrome = mkUserChrome cfg.chrome.variables;
-                userContent = mkUserContent cfg.chrome.variables;
+                userChrome = /*css*/''
+                    @import url("colors.css");
+                    @import url("zenix/findbar.css");
+                    @import url("zenix/hide-titlebar-buttons.css");
+                    @import url("zenix/theme.css");
+                '';
+                userContent = /*css*/''
+                    @import url("colors.css");
+                    @import url("zenix-pages/aboutPages.css");
+                '';
             };
             homeManagerPath = inputs.home-manager;
         })
     ];
     options.programs.zenix = import ./options.nix lib;
     config = lib.mkIf cfg.enable {
-        home.file =
-            {
-                ".zen/profiles.ini".text = generateIni cfg.profiles;
-            }
-            // mkChromeDirectories cfg.profiles;
+        home.file = utils.mkZenixFiles cfg;
     };
 }
