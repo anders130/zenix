@@ -951,10 +951,11 @@ in {
                     then {source = profile.userChrome;}
                     else {inherit (profile.userChrome) source recursive;});
                 mkUserCss = userCss: defaultCss: extraFilename: mkIf (userCss != "" || defaultCss != "") {
-                    text =
+                    text = defaultCss + "\n" + (
                         if builtins.isString userCss
-                        then defaultCss + "\n" + userCss
-                        else "@import url(\"${extraFilename}\");\n" + defaultCss;
+                        then userCss
+                        else "@import url(\"${extraFilename}\");"
+                    );
                 };
                 in
                     # Merge the regular profile settings with extension settings
