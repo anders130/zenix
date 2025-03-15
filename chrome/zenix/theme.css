@@ -141,7 +141,7 @@
 }
 
 /* Compact mode */
-:has([zen-has-hover="true"]) {
+:has([zen-compact-mode="true"]) :has([zen-has-hover="true"]) {
 
     #titlebar,
     #nav-bar {
