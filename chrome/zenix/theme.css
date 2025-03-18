@@ -154,7 +154,8 @@
 }
 
 /* Compact mode */
-:has([zen-compact-mode="true"]) :has([zen-has-hover="true"]) {
+:has([zen-compact-mode="true"]) :has([zen-has-hover="true"]),
+:has([zen-compact-mode="true"]) :has([flash-popup="true"]) {
 
     #titlebar,
     #nav-bar {
