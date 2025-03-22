@@ -26,6 +26,7 @@
         --zen-themed-toolbar-bg: color-mix(in srgb,
                 var(--zenix-color-mantle) 60%,
                 transparent) !important;
+        --zen-themed-toolbar-bg-transparent: transparent !important;
         --zen-main-browser-background: color-mix(in srgb,
                 var(--zenix-color-mantle) 60%,
                 transparent) !important;
@@ -102,7 +103,6 @@
     }
 
     .sidebar-placesTree,
-    #zen-workspaces-button,
     #urlbar-background,
     .content-shortcuts {
         background-color: var(--zenix-color-base) !important;
@@ -170,5 +170,18 @@
     #zen-appcontent-navbar-container {
         border: none;
         background: transparent;
+    }
+}
+
+/*mediaplayer controls*/
+#zen-media-controls-toolbar {
+    &>toolbaritem {
+        --zen-media-control-bg: var(--zenix-color-base) !important;
+        backdrop-filter: blur(var(--zenix-glass-blur-radius)) !important;
+        border: 1px solid var(--zen-colors-border) !important;
+    }
+
+    #zen-media-progress-bar::-moz-range-track {
+        background: transparent !important;
     }
 }
