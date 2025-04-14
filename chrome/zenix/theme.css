@@ -151,6 +151,11 @@
                 var(--zenix-color-highlight) 50%,
                 transparent) !important;
     }
+
+    /* right click menu */
+    .menupopup-arrowscrollbox {
+        background: var(--zenix-glass-background) !important;
+    }
 }
 
 /* Compact mode */
