@@ -21,13 +21,17 @@ in {
                     "zenix.findbar.disabled" = !findbar;
                     "zenix.hide-titlebar-buttons" = hideTitlebarButtons;
                     "zen.theme.accent-color" = variables.colors.primary;
+
                     "zen.view.grey-out-inactive-windows" = false; # fix inactive window color
+                    "toolkit.legacyUserProfileCustomizations.stylesheets" = cfg.chrome.enable; # enable theming
+                    "zen.view.experimental-no-window-controls" = hideTitlebarButtons;
                 };
                 userChrome = /*css*/''
                     @import url("colors.css");
-                    @import url("zenix/findbar.css");
                     @import url("zenix/hide-titlebar-buttons.css");
+                    @import url("zenix/mediaplayer.css");
                     @import url("zenix/theme.css");
+                    @import url("zenix/unloaded-tabs.css");
                 '';
                 userContent = /*css*/''
                     @import url("colors.css");
