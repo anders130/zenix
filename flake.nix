@@ -20,7 +20,7 @@
             flake = {
                 homeModules.default = import ./module inputs;
                 overlays.default = final: prev: {
-                    inherit (inputs.zen-browser.packages.${prev.system}) zen-browser-unwrapped zen-browser;
+                    inherit (inputs.zen-browser.packages.${prev.stdenv.hostPlatform.system}) zen-browser-unwrapped zen-browser;
                 };
             };
             perSystem = {
